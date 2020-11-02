@@ -15,7 +15,24 @@ player::player(){
 	 width = reader.GetReal("stats", "width", -1);
 }
 
-int	player::show_health(){
+int player::return_team(){
+return team;
+}
+
+void player::load_team(int new_team){
+	 team=new_team;
+}
+
+//loads the player texture
+void player::load_texture(SDL_Renderer * renderer){
+	player_texture = IMG_LoadTexture(renderer, "../assets/capi.png");
+}
+
+SDL_Texture * player::return_texture(){
+	return player_texture;
+}
+
+int	player::return_health(){
 	return health;
 }
 //the player takes 'damage' amount of damage
@@ -28,11 +45,11 @@ void	player::pos(float &pos_x, float &pos_y){
 	pos_y=y;
 }
 
-int	player::show_speed(){
+int	player::return_speed(){
 	return speed;
 }
 
-int	player::show_dig_rate(){
+int	player::return_dig_rate(){
 	return dig_rate;
 }
 //updates the players position according to the fuction input
@@ -42,3 +59,7 @@ void	player::update_pos(float pos_x, float pos_y){
 }
 
 
+	player::~player(){
+	SDL_DestroyTexture(player_texture);
+
+	}

@@ -14,13 +14,13 @@ class view{
 	private:
 		SDL_Window * window;
 		SDL_Renderer * renderer; 
-		SDL_Texture * player_texture;
 
 	public:
+
+		SDL_Renderer * return_renderer();
 		void init_window ();
 		void init_render ();
-		void render(SDL_Rect target);
-		SDL_Texture * get_textura();
+		void render(SDL_Texture * texture, SDL_Rect target);
 		~view();
 		view();
 

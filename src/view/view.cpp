@@ -6,10 +6,8 @@
 #include <SDL2/SDL_image.h>
 using namespace std;
 
-SDL_Texture * view::get_textura(){
-
-	return player_texture;
-
+SDL_Renderer * view::return_renderer(){
+return renderer;
 }
 view::view(){
 
@@ -20,7 +18,6 @@ view::view(){
 	}
 	this->init_window();
 	this->init_render();
-	player_texture = IMG_LoadTexture(renderer, "../capi.png");
 
 }
 void view::init_window(){
@@ -55,16 +52,15 @@ void view::init_render(){
 
 }
 
-void view::render(SDL_Rect target){
-  // Desenhar a cena
-   // SDL_RenderClear(renderer);
-   // SDL_RenderCopy(renderer, texture, nullptr, &target);
-   // SDL_RenderPresent(renderer);
+void view::render(SDL_Texture * texture, SDL_Rect target){
+  //Draws the target element 
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, texture, nullptr, &target);
+    SDL_RenderPresent(renderer);
   }
 
 
 view::~view(){
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
-//	SDL_DestroyTexture(texture);
 }

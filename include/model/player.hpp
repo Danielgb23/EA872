@@ -18,20 +18,33 @@ class player{
 		float dig_rate;
 		int height;
 		int width;
-		float team;
-		float facing;
+		int team;
+		int facing;
+		SDL_Texture * player_texture;
 		
 
 
 
 	public:
+		void load_team(int new_team);
+		int return_team();
+		SDL_Texture * return_texture();
+		void load_texture(SDL_Renderer * renderer);
 		player();
+		~player();
 		void load();
-		int show_health();
+		int return_health();
+
+//the player takes 'damage' amount of damage
 		int take_damage(int damage);
+		
+//loads the variables x and y  with the player current position
 		void pos(float &x, float &y);
-		int show_speed();
-		int show_dig_rate();
+
+		int return_speed();
+		int return_dig_rate();
+
+//updates the players position according to the fuction input
 		void update_pos(float x, float y);
 
 

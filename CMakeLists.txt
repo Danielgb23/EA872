@@ -1,6 +1,9 @@
 # Versao minima do cmake
 cmake_minimum_required(VERSION 3.0)
 
+#gdb flag debug
+set(CMAKE_BUILD_TYPE Debug)
+
 # Nome do meu projeto
 project(madrugada_dos_mortos)
 
@@ -39,6 +42,10 @@ target_link_libraries(INIReader ini)
 # Garantir que usaremos C++11 (ou superior, se preciso)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+# Bibliotecas linkadas externamente
+target_link_libraries(madruga SDL2)
+target_link_libraries(madruga SDL2_image)
 
 # Automatizacao do Doxygen
 find_package(Doxygen REQUIRED dot)
