@@ -14,30 +14,26 @@ add_executable(madruga src/main.cpp)
 include_directories(include)
 
 # Bibliotecas locais (estaticas)
-add_library(player src/model/player.cpp)
-target_link_libraries(madruga player)
+add_library(entity src/model/entity.cpp)
+target_link_libraries(madruga entity)
 
 add_library(view src/view/view.cpp)
 target_link_libraries(madruga view)
 
+add_library(update src/controller/update.cpp)
+target_link_libraries(madruga update)
+target_link_libraries(update entity)
+
 add_library(INIReader src/INIReader.cpp)
 target_link_libraries(madruga INIReader)
-target_link_libraries(player INIReader)
+target_link_libraries(entity INIReader)
 
 add_library(ini src/ini.c)
 target_link_libraries(INIReader ini)
 
-#add_library(monster src/model/monster.cpp)
-#target_link_libraries(madruga monster)
-
-#add_library(monster src/model/monster.cpp)
-#target_link_libraries(madruga monster)
-
 #add_library(update src/controller/update.cpp)
 #target_link_libraries(madruga update)
 
-#add_library(controller src/controller.cpp)
-#target_link_libraries(madruga controller)
 
 # Garantir que usaremos C++11 (ou superior, se preciso)
 set(CMAKE_CXX_STANDARD 11)
@@ -46,6 +42,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Bibliotecas linkadas externamente
 target_link_libraries(madruga SDL2)
 target_link_libraries(madruga SDL2_image)
+target_link_libraries(update SDL2_image)
+target_link_libraries(entity SDL2_image)
 
 # Automatizacao do Doxygen
 find_package(Doxygen REQUIRED dot)

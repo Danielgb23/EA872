@@ -7,9 +7,16 @@
 using namespace std;
 
 SDL_Renderer * view::return_renderer(){
-return renderer;
+	return renderer;
 }
 view::view(){
+	INIReader reader("../config/view.ini");
+	if (reader.ParseError() < 0) {
+		std::cout << "Can't load 'view.ini'\n";
+		exit( 1 );
+	}
+	screen_width = reader.GetInteger("screen", "width", -1);
+	screen_height = reader.GetInteger("screen", "height", -1);
 
 	// Inicializando o subsistema de video do SDL
 	if ( SDL_Init (SDL_INIT_VIDEO) < 0 ) {
@@ -18,6 +25,8 @@ view::view(){
 	}
 	this->init_window();
 	this->init_render();
+// Select the color for drawing. It is set to red here.
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
 }
 void view::init_window(){
@@ -27,8 +36,8 @@ void view::init_window(){
 	window = SDL_CreateWindow("Madrugada dos mortos",
 			SDL_WINDOWPOS_UNDEFINED,
 			SDL_WINDOWPOS_UNDEFINED,
-			SCREEN_WIDTH,
-			SCREEN_HEIGHT,
+			screen_width,
+			screen_height,
 			SDL_WINDOW_SHOWN);
 	if (window==nullptr) { // Em caso de erro...
 		std::cout << SDL_GetError();
@@ -51,15 +60,24 @@ void view::init_render(){
 	}
 
 }
-
+void view::clear(){
+	SDL_RenderClear(renderer);
+}
+void view::present(){
+	SDL_RenderPresent(renderer);
+}
 void view::render(SDL_Texture * texture, SDL_Rect target){
-  //Draws the target element 
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, texture, nullptr, &target);
-    SDL_RenderPresent(renderer);
-  }
+	//Draws the target element 
+	SDL_RenderCopy(renderer, texture, nullptr, &target);
+}
 
+int view::rwidth(){
+	return screen_width;
+}
 
+int view::rheight(){
+	return screen_height;
+}
 view::~view(){
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
