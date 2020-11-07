@@ -23,6 +23,7 @@ class view{
 		void init_window ();
 		void init_render ();
 		void render(SDL_Texture * texture, SDL_Rect target);
+		void  render_text(string text, SDL_Rect  Message_rect);
 		~view();
 		view();
 		int rwidth();

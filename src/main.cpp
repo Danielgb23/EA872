@@ -12,22 +12,7 @@
 
 int main() {
 	update controller;
-/*	
-	   view viewer;
-	   entity player1;
 
-	   player1.load_type( viewer.return_renderer(), 1 );
-	// Quadrado onde a textura sera desenhada
-	SDL_Rect target;
-	target.x = SCREEN_WIDTH/2;
-	target.y = SCREEN_HEIGHT/2;
-	SDL_QueryTexture(player1.return_texture(), nullptr, nullptr, &target.w, &target.h);
-	target.w/=4;
-	target.h/=4;
-
-	target.w=50;
-	target.h=50;
-	*/
 	// Variaveis para verificar eventos
 	
 	SDL_Event evento; // eventos discretos

@@ -8,6 +8,7 @@
 #include "../include/model/entity.hpp"
 #include "../include/model/mapa.hpp"
 #include "../include/view/view.hpp"
+#include <sstream>
 
 using namespace std;
 
@@ -31,6 +32,7 @@ class update{
 		//terrain Map;
 		float distance(shared_ptr<entity> ent1,shared_ptr<entity> ent2);
 		void move_zombie(shared_ptr<entity> zombie, float T);
+		void attack_closest(shared_ptr<entity> ent, float T);
 		
 };
 

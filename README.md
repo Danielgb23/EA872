@@ -12,3 +12,8 @@ Primeiro criaremos as classes do model responsáveis por armazenar os dados dos 
 Testado isso faremos o view para carregar esses elementos na tela de computador com se possivel sprites simples(penso no estilo dos personagens do among us, deve ter uns legais na internet para usar).
 
 Depois faremos o controler com as classes necessarias para os players poderem controlar os seus personagens e com a IA dos minions para eles atacarem seus inimigos. Que  seguir o mais próximo e atacar.
+
+# Dependencias
+sdl2 ttf:
+sudo apt-get install libsdl2-ttf-dev
+

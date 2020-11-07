@@ -44,6 +44,8 @@ target_link_libraries(madruga SDL2)
 target_link_libraries(madruga SDL2_image)
 target_link_libraries(update SDL2_image)
 target_link_libraries(entity SDL2_image)
+target_link_libraries(update SDL2_ttf)
+target_link_libraries(view SDL2_ttf)
 
 # Automatizacao do Doxygen
 find_package(Doxygen REQUIRED dot)

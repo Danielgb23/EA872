@@ -4,6 +4,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 using namespace std;
 
 SDL_Renderer * view::return_renderer(){
@@ -17,7 +18,10 @@ view::view(){
 	}
 	screen_width = reader.GetInteger("screen", "width", -1);
 	screen_height = reader.GetInteger("screen", "height", -1);
-
+	
+	if (TTF_Init() < 0) {
+	   cout << "error initializing SDL_ttf" << endl;
+	}
 	// Inicializando o subsistema de video do SDL
 	if ( SDL_Init (SDL_INIT_VIDEO) < 0 ) {
 		std::cout << SDL_GetError();
@@ -25,8 +29,8 @@ view::view(){
 	}
 	this->init_window();
 	this->init_render();
-// Select the color for drawing. It is set to red here.
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	// Select the color for drawing. It is set to red here.
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
 }
 void view::init_window(){
@@ -60,6 +64,21 @@ void view::init_render(){
 	}
 
 }
+void  view::render_text(string text, SDL_Rect Message_rect){
+	TTF_Font* Font = TTF_OpenFont("../assets/Arial.ttf", 24); 
+	SDL_Color Color = {0, 0, 0};  
+
+	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Font, text.c_str(), Color); 
+	SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage); 
+
+	render(Message, Message_rect);
+
+	//Don't forget to free your surface and texture
+	TTF_CloseFont( Font );
+	SDL_FreeSurface(surfaceMessage);
+	SDL_DestroyTexture(Message);
+}
+
 void view::clear(){
 	SDL_RenderClear(renderer);
 }

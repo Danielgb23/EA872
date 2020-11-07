@@ -19,6 +19,7 @@ class entity{
 		int team;
 		int facing;
 		int attack_damage;
+		float range;
 		int attack_rate;
 		float attack_cooldown;
 		SDL_Texture * standing;
@@ -51,6 +52,8 @@ class entity{
 		void update_pos(float x, float y);
 
 		int return_speed();
+		int rtype();
+		float rrange();
 		int return_dig_rate();
 
 

@@ -31,6 +31,7 @@ void entity::load(SDL_Renderer * renderer, int get_type, int new_team){
 		attack_rate = reader.GetReal("stats", "attack_rate", -1);
 		height = reader.GetReal("stats", "height", -1);
 		width = reader.GetReal("stats", "width", -1);
+		range = reader.GetReal("stats", "range", -1);
 
 	}
 	//player
@@ -46,6 +47,7 @@ void entity::load(SDL_Renderer * renderer, int get_type, int new_team){
 		dig_rate = reader.GetReal("stats", "digrate", -1);
 		height = reader.GetReal("stats", "height", -1);
 		width = reader.GetReal("stats", "width", -1);
+		range = reader.GetReal("stats", "range", -1);
 
 	}
 	//zombie
@@ -62,11 +64,15 @@ void entity::load(SDL_Renderer * renderer, int get_type, int new_team){
 		attack_rate = reader.GetReal("stats", "attack_rate", -1);
 		height = reader.GetReal("stats", "height", -1);
 		width = reader.GetReal("stats", "width", -1);
+		range = reader.GetReal("stats", "range", -1);
 
 	}
 
 }
 
+int entity::rtype(){
+	return type;
+}
 float entity::rx(){
 	return x;
 }
@@ -100,6 +106,9 @@ int	entity::attack(float time_step){
 	return 0;
 }
 
+float entity::rrange(){
+return range;
+}
 //the entity takes 'damage' amount of damage
 int	entity::take_damage(int damage){
 	health-=damage;
