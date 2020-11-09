@@ -17,12 +17,16 @@ include_directories(include)
 add_library(entity src/model/entity.cpp)
 target_link_libraries(madruga entity)
 
+add_library(mapa src/model/mapa.cpp)
+target_link_libraries(madruga mapa)
+
 add_library(view src/view/view.cpp)
 target_link_libraries(madruga view)
 
 add_library(update src/controller/update.cpp)
 target_link_libraries(madruga update)
 target_link_libraries(update entity)
+target_link_libraries(update mapa)
 
 add_library(INIReader src/INIReader.cpp)
 target_link_libraries(madruga INIReader)

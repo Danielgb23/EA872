@@ -14,8 +14,8 @@ class entity{
 		int health;
 		float speed;
 		float dig_rate;
-		int height;
-		int width;
+		float height;
+		float width;
 		int team;
 		int facing;
 		int attack_damage;
@@ -27,6 +27,7 @@ class entity{
 	public:
 		void load_team(int new_team);
 		int return_team();
+		float rwidth();
 		int attack(float time_step);
 		SDL_Texture * return_texture();
 		void load(SDL_Renderer * renderer, int get_type, int new_team);

@@ -9,16 +9,18 @@
 
 using namespace std;
 
-//controler
 class terrain{
 	public:
 		terrain();
-		int width();
-		int height();
+		int rwidth();
+		int rheight();
+		void init(SDL_Renderer * renderer);
+		SDL_Texture * rbackground();
 	private:
+		SDL_Texture * background;
+		int width;
+		int height;
 
-		
-		
 };
 
 

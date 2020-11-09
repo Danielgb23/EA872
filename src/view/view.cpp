@@ -65,7 +65,7 @@ void view::init_render(){
 
 }
 void  view::render_text(string text, SDL_Rect Message_rect){
-	TTF_Font* Font = TTF_OpenFont("../assets/Arial.ttf", 24); 
+	TTF_Font* Font = TTF_OpenFont("../assets/Arial.ttf", 80); 
 	SDL_Color Color = {0, 0, 0};  
 
 	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Font, text.c_str(), Color); 

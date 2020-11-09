@@ -4,33 +4,32 @@ using namespace std;
 
 update::update(){
 	state= SDL_GetKeyboardState(nullptr); // estado do teclado
+	Map.init(Viewer.return_renderer());
+//player
+	spawns_entity(1, 2, 10, 10);
 
-	shared_ptr<entity> player1 (new entity);
-	player1->load( Viewer.return_renderer(), 1, 2 );
-	player1->update_pos(10,10);
-	Entities.push_back(player1);
+	//graves
+	spawns_entity(10, -1, 20, 20);
+	spawns_entity(10, -1, 21, 20);
+	spawns_entity(10, -1, 22, 20);
+	spawns_entity(10, -1, 23, 20);
 
+	spawns_entity(10, -1, 5, 7);
+	spawns_entity(10, -1, 4, 7);
+	spawns_entity(10, -1, 3, 7);
 
-	shared_ptr<entity> zombie1 (new entity);
-	zombie1->load( Viewer.return_renderer(), 2, 2 );
-	zombie1->update_pos(20,10);
-	Entities.push_back(zombie1);
+	spawns_entity(10, -1, 40, 20);
+	spawns_entity(10, -1, 41, 20);
+	spawns_entity(10, -1, 42, 20);
+	spawns_entity(10, -1, 43, 20);
+	//zombies
 
-	shared_ptr<entity> zombie2 (new entity);
-	zombie2->load( Viewer.return_renderer(), 2, 2 );
-	zombie2->update_pos(20,5);
-	Entities.push_back(zombie2);
-
-
-	shared_ptr<entity> cop (new entity);
-	cop->load( Viewer.return_renderer(), 0, 0 );
-	cop->update_pos(10,5);
-	Entities.push_back(cop);
-
-	shared_ptr<entity> cop2 (new entity);
-	cop2->load( Viewer.return_renderer(), 0, 0 );
-	cop2->update_pos(5,5);
-	Entities.push_back(cop2);
+	//cops
+	spawns_entity(0, 0, 13, 5);
+	spawns_entity(0, 0, 5, 5);
+	spawns_entity(0, 0, 48, 5);
+	spawns_entity(0, 0, 50, 5);
+	spawns_entity(0, 0, 52, 5);
 
 }
 
@@ -44,22 +43,29 @@ void update::step(float T){
 	}
 
 	//attacks
-
-
 	for(shared_ptr<entity> ent: Entities){
-		if(ent->rtype() != 1)
+		if(ent->rtype() != 1 )
 			attack_closest(ent, T);
 	}
+	dig_grave(Entities[0], T);
 
 	//kills the dead
+	for (auto it = Entities.begin(); it != Entities.end(); ++it)
+		if(*it)
+			if((*it)->return_health() <= 0)
+				Entities.erase(it);
 
-for (auto it = Entities.begin(); it != Entities.end(); ++it)
-		if((*it)->return_health() <= 0)
-			Entities.erase(it);
-
-
+	
 	//renderization part
 	Viewer.clear();
+	//background
+	SDL_Rect target;
+	target.w=Viewer.rwidth();
+	target.h=Viewer.rheight();
+	target.x=0;
+	target.y=0;
+	Viewer.render(Map.rbackground(), target);
+	//entities
 	for(shared_ptr<entity> ent: Entities){
 		render_entity(ent);
 	}
@@ -74,22 +80,22 @@ void update::render_entity(shared_ptr<entity> ent){
 	SDL_Rect target;
 	int h,w;
 	string text;
-	std::ostringstream ss;
+	int render_factor=25;
 	SDL_QueryTexture(ent->return_texture(), nullptr, nullptr, &w, &h);
 	//renders the image taller than it's movement
-	target.h=(int)((float)h/(float)w*50);
-	target.w=50;
+	target.w=(int)(render_factor*ent->rwidth());
+	target.h=(int)((float)h/(float)w*target.w);
 
-	target.x = ent->rx()*50;
-	target.y = ent->ry()*50-target.h;
+	target.x = ent->rx()*render_factor;
+	target.y = ent->ry()*render_factor-target.h;
 
 	Viewer.render(ent->return_texture(), target);
 
-//renders text with health
+	//renders text with health
 	SDL_Rect Message_rect; 
-	Message_rect.w = target.w/2; 
-	Message_rect.h = target.w/4;
-	Message_rect.x = target.x+target.w/4; 
+	Message_rect.w = target.w; 
+	Message_rect.h = target.w/2;
+	Message_rect.x = target.x; 
 	Message_rect.y = target.y-Message_rect.h;
 
 	text=to_string(ent->return_health());
@@ -100,6 +106,13 @@ void update::render_entity(shared_ptr<entity> ent){
 	Viewer.render_text(text, Message_rect);
 
 }
+void ::update::spawns_entity(int type, int team, float x, float  y){
+	shared_ptr<entity> ent (new entity);
+	ent->load( Viewer.return_renderer(), type, team );
+	ent->update_pos(x,y);
+	Entities.push_back(ent);
+}
+
 void update::move_player(shared_ptr<entity> player, float T){
 	float speed=player->return_speed();
 	float dist=speed*T;
@@ -118,6 +131,7 @@ void update::move_player(shared_ptr<entity> player, float T){
 	else if (state[SDL_SCANCODE_RIGHT]) 
 		player->addx(dist*collision_right(player));
 } 
+
 float update::distance(shared_ptr<entity> ent1,shared_ptr<entity> ent2){
 	return sqrt(pow((ent1->rx()-ent2->rx()),2)+pow((ent1->ry()-ent2->ry()),2));
 }
@@ -132,7 +146,7 @@ void update::move_zombie(shared_ptr<entity> zombie, float T){
 
 	for (shared_ptr<entity> victim : Entities)
 		//if of a different team
-		if(victim->return_team() != zombie->return_team())
+		if(victim->return_team() != zombie->return_team() &&  victim->return_team()!= -1)
 			//if is closest
 			if(distance(zombie,victim) < clst_dist){
 				closest=victim;
@@ -160,7 +174,7 @@ void update::attack_closest(shared_ptr<entity> ent, float T){
 
 	for (shared_ptr<entity> victim : Entities)
 		//if of a different team
-		if(victim->return_team() != ent->return_team())
+		if(victim->return_team() != ent->return_team() &&  victim->return_team()!= -1)
 			//if is closest
 			if(distance(ent,victim) < clst_dist){
 				closest=victim;
@@ -174,6 +188,37 @@ void update::attack_closest(shared_ptr<entity> ent, float T){
 
 	}
 }
+//digs closest grave to the player if within range
+void update::dig_grave(shared_ptr<entity> player, float T){
+	shared_ptr<entity>  closest;
+	float clst_dist=100000000;
+	SDL_PumpEvents(); // update the keyboard state
+
+	//if keyboard up is pressed
+	if (state[SDL_SCANCODE_SPACE]) {
+		for (shared_ptr<entity> grave : Entities)
+			//if is a grave (type 10) 
+			if(grave->rtype()==10 )
+				//if is closest
+				if(distance(player,grave) < clst_dist){
+					closest=grave;
+					clst_dist=distance(player,grave);
+				}
+
+		if(closest==nullptr)
+			return;
+		//within range
+		if(clst_dist<=player->rrange()){
+			closest->take_damage(player->attack(T));
+			//if the grave is fully dug raise the dead
+			if(closest->return_health()<=0){
+				//zombie, player team, grave location
+				spawns_entity(2, player->return_team(), closest->rx(), closest->ry());
+			}
+		}
+	}
+}
+
 
 //detects collisions between entities and objects for a given entity in a given direction
 float update::collision_down(shared_ptr<entity> moved){

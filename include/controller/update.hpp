@@ -8,7 +8,6 @@
 #include "../include/model/entity.hpp"
 #include "../include/model/mapa.hpp"
 #include "../include/view/view.hpp"
-#include <sstream>
 
 using namespace std;
 
@@ -19,6 +18,10 @@ class update{
 		void step(float T);
 		update();
 	private:
+		view Viewer;
+		terrain Map;
+		void spawns_entity(int type, int team, float x, float  y);
+		void dig_grave(shared_ptr<entity> player, float T);
 		void move_player(shared_ptr<entity> player, float T);
 		void render_entity(shared_ptr<entity> ent);
 		const Uint8* state; // estado do teclado 
@@ -27,7 +30,7 @@ class update{
 		float collision_down(shared_ptr<entity> moved);
 		float collision_left(shared_ptr<entity> moved);
 		float collision_right(shared_ptr<entity> moved);
-		view Viewer;
+
 		vector <shared_ptr<entity>> Entities;
 		//terrain Map;
 		float distance(shared_ptr<entity> ent1,shared_ptr<entity> ent2);

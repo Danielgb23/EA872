@@ -44,7 +44,8 @@ void entity::load(SDL_Renderer * renderer, int get_type, int new_team){
 		}
 		health = reader.GetInteger("stats", "health", -1);
 		speed = reader.GetReal("stats", "speed", -1);
-		dig_rate = reader.GetReal("stats", "digrate", -1);
+		attack_damage = reader.GetReal("stats", "attack", -1);
+		attack_rate = reader.GetReal("stats", "attack_rate", -1);
 		height = reader.GetReal("stats", "height", -1);
 		width = reader.GetReal("stats", "width", -1);
 		range = reader.GetReal("stats", "range", -1);
@@ -67,7 +68,26 @@ void entity::load(SDL_Renderer * renderer, int get_type, int new_team){
 		range = reader.GetReal("stats", "range", -1);
 
 	}
+	if(type==10){
 
+		standing = IMG_LoadTexture(renderer, "../assets/grave.png");
+		INIReader reader("../config/grave.ini");
+		if (reader.ParseError() < 0) {
+			std::cout << "Can't load 'grave.ini'\n";
+			exit( 1 );
+		}
+		health = reader.GetInteger("stats", "health", -1);
+		height = reader.GetReal("stats", "height", -1);
+		width = reader.GetReal("stats", "width", -1);
+
+	}
+
+
+
+}
+
+float entity::rwidth(){
+	return width;
 }
 
 int entity::rtype(){
@@ -107,7 +127,7 @@ int	entity::attack(float time_step){
 }
 
 float entity::rrange(){
-return range;
+	return range;
 }
 //the entity takes 'damage' amount of damage
 int	entity::take_damage(int damage){
