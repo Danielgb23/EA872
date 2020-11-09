@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <cmath>
+#include <algorithm>
 #include "../include/model/entity.hpp"
 #include "../include/model/mapa.hpp"
 #include "../include/view/view.hpp"

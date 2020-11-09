@@ -59,6 +59,7 @@ void update::step(float T){
 	
 	//renderization part
 	Viewer.clear();
+
 	//background
 	SDL_Rect target;
 	target.w=Viewer.rwidth();
@@ -66,8 +67,14 @@ void update::step(float T){
 	target.x=0;
 	target.y=0;
 	Viewer.render(Map.rbackground(), target);
+
 	//entities
-	for(shared_ptr<entity> ent: Entities){
+	//creates vector to sort by y	
+	vector <shared_ptr<entity>> sorted=Entities;
+	//sorts 'sorted' by the entities's y
+	std::sort(sorted.begin(), sorted.end(), [](shared_ptr<entity>  a, shared_ptr<entity> b){ return a->ry() < b->ry(); });
+	
+	for(shared_ptr<entity> ent: sorted){
 		render_entity(ent);
 	}
 
