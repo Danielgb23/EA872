@@ -5,7 +5,7 @@ using namespace std;
 update::update(){
 	state= SDL_GetKeyboardState(nullptr); // estado do teclado
 	Map.init(Viewer.return_renderer());
-//player
+	//player
 	spawns_entity(1, 2, 10, 10);
 
 	//graves
@@ -51,7 +51,8 @@ void update::step(float T){
 
 	//kills the dead
 	for (auto it = Entities.begin(); it != Entities.end(); ++it)
-		if(*it)
+		//this prevents segfault
+		if(!Entities.empty())
 			if((*it)->return_health() <= 0)
 				Entities.erase(it);
 
