@@ -50,12 +50,22 @@ void update::step(float T){
 	dig_grave(Entities[0], T);
 
 	//kills the dead
+	//copies the alive to a vector and it back to Entities
+	vector <shared_ptr<entity>> copy;
+		if(!Entities.empty())
+			for(shared_ptr<entity> ent: Entities)
+				//if alive
+				if(ent->return_health() > 0)
+					copy.push_back(ent);
+		Entities=copy;
+				
+/*//this gives a lot of segfault because elements are deleted during the loop
 	for (auto it = Entities.begin(); it != Entities.end(); ++it)
 		//this prevents segfault
 		if(!Entities.empty())
-			if((*it)->return_health() <= 0)
-				Entities.erase(it);
-
+				if((*it)->return_health() <= 0)
+					Entities.erase(it);
+*/
 	
 	//renderization part
 	Viewer.clear();
