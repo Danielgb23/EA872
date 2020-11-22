@@ -22,7 +22,8 @@ class entity{
 		float range;
 		int attack_rate;
 		float attack_cooldown;
-		SDL_Texture * standing;
+		//SDL_Texture * standing;
+		std::shared_ptr<SDL_Texture> standing;
 
 	public:
 		void load_team(int new_team);

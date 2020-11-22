@@ -22,6 +22,7 @@ class view{
 		SDL_Renderer * return_renderer();
 		void init_window ();
 		void init_render ();
+		SDL_Texture * get_texture(int type);
 		void render(SDL_Texture * texture, SDL_Rect target);
 		void  render_text(string text, SDL_Rect  Message_rect);
 		~view();

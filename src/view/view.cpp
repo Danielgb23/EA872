@@ -10,6 +10,21 @@ using namespace std;
 SDL_Renderer * view::return_renderer(){
 	return renderer;
 }
+/*
+SDL_Texture *  get_texture(int type){
+
+	if(type==0)
+		standing = IMG_LoadTexture(renderer, "../assets/cop_standing.png");
+	if(type==1)
+		standing = IMG_LoadTexture(renderer, "../assets/necromancer_standing.png");
+	if(type==2)
+		standing = IMG_LoadTexture(renderer, "../assets/zombie_standing.png");
+	if(type==10)
+		standing = IMG_LoadTexture(renderer, "../assets/grave.png");
+}
+
+*/
+
 view::view(){
 	INIReader reader("../config/view.ini");
 	if (reader.ParseError() < 0) {

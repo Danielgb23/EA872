@@ -33,17 +33,18 @@ update::update(){
 
 }
 
+
 void update::step(float T){
 	//entities movements
 	move_player(Entities[0], T);
 
-	for(entity zombie: Entities){
+	for(entity & zombie: Entities){
 		if(zombie.rtype()==2)
 			move_zombie(zombie, T);
 	}
 
 	//attacks
-	for(entity ent: Entities){
+	for(entity  &ent: Entities){
 		if(ent.rtype() != 1 )
 			attack_closest(ent, T);
 	}
@@ -157,7 +158,7 @@ void update::move_zombie(entity &zombie, float T){
 	entity * closest=nullptr;
 	float clst_dist=100000000;
 
-	for (entity victim : Entities)
+	for (entity & victim : Entities)
 		//if of a different team
 		if(victim.return_team() != zombie.return_team() &&  victim.return_team()!= -1)
 			//if is closest
@@ -185,7 +186,7 @@ void update::attack_closest(entity &ent, float T){
 	float clst_dist=100000000;
 	entity * closest=nullptr;
 
-	for (entity victim : Entities)
+	for (auto & victim : Entities)
 		//if of a different team and not grave or unanimate
 		if(victim.return_team() != ent.return_team() &&  victim.return_team()!= -1)
 			//if is closest
@@ -197,7 +198,9 @@ void update::attack_closest(entity &ent, float T){
 	if(closest==nullptr)
 		return;
 	if(clst_dist<=ent.rrange()){
-		closest->take_damage(ent.attack(T));
+		
+		int golpe=ent.attack(T);
+		closest->take_damage(golpe);
 
 	}
 }
@@ -209,7 +212,7 @@ void update::dig_grave(entity &player, float T){
 
 	//if keyboard up is pressed
 	if (state[SDL_SCANCODE_SPACE]) {
-		for (entity grave : Entities)
+		for (entity & grave : Entities)
 			//if is a grave (type 10) 
 			if(grave.rtype()==10 )
 				//if is closest
