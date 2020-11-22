@@ -86,6 +86,18 @@ void entity::load(SDL_Renderer * renderer, int get_type, int new_team){
 
 }
 
+void entity::load_texture(SDL_Renderer * renderer){
+
+	if(type==0)
+		standing = IMG_LoadTexture(renderer, "../assets/cop_standing.png");
+	if(type==1)
+		standing = IMG_LoadTexture(renderer, "../assets/necromancer_standing.png");
+	if(type==2)
+		standing = IMG_LoadTexture(renderer, "../assets/zombie_standing.png");
+	if(type==10)
+		standing = IMG_LoadTexture(renderer, "../assets/grave.png");
+}
+
 float entity::rwidth(){
 	return width;
 }
@@ -154,6 +166,7 @@ void	entity::update_pos(float pos_x, float pos_y){
 
 
 entity::~entity(){
+	//cout<<"entity destroyed\n";
 	SDL_DestroyTexture(standing);
 
 }

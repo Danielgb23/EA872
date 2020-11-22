@@ -22,21 +22,21 @@ class update{
 		view Viewer;
 		terrain Map;
 		void spawns_entity(int type, int team, float x, float  y);
-		void dig_grave(shared_ptr<entity> player, float T);
-		void move_player(shared_ptr<entity> player, float T);
-		void render_entity(shared_ptr<entity> ent);
+		void dig_grave(entity &player, float T);
+		void move_player(entity &player, float T);
+		void render_entity(entity &ent);
 		const Uint8* state; // estado do teclado 
 		//scans the enviroment for collisions in the proper direction
-		float collision_up(shared_ptr<entity> moved);
-		float collision_down(shared_ptr<entity> moved);
-		float collision_left(shared_ptr<entity> moved);
-		float collision_right(shared_ptr<entity> moved);
+		float collision_up(entity &moved);
+		float collision_down(entity &moved);
+		float collision_left(entity &moved);
+		float collision_right(entity &moved);
 
-		vector <shared_ptr<entity>> Entities;
+		vector <entity> Entities;
 		//terrain Map;
-		float distance(shared_ptr<entity> ent1,shared_ptr<entity> ent2);
-		void move_zombie(shared_ptr<entity> zombie, float T);
-		void attack_closest(shared_ptr<entity> ent, float T);
+		float distance(entity &ent1,entity &ent2);
+		void move_zombie(entity &zombie, float T);
+		void attack_closest(entity &ent, float T);
 		
 };
 

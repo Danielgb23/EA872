@@ -11,6 +11,7 @@ using namespace std;
 
 class terrain{
 	public:
+		~terrain();
 		terrain();
 		int rwidth();
 		int rheight();

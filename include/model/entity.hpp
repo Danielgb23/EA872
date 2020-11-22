@@ -26,6 +26,7 @@ class entity{
 
 	public:
 		void load_team(int new_team);
+		void load_texture(SDL_Renderer * renderer);
 		int return_team();
 		float rwidth();
 		int attack(float time_step);

@@ -13,3 +13,9 @@ SDL_Texture * terrain::rbackground(){
 
 	return background;
 }
+
+terrain::~terrain(){
+
+	SDL_DestroyTexture(background);
+
+}
