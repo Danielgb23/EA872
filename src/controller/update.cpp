@@ -35,6 +35,8 @@ update::update(){
 
 
 void update::step(float T){
+	SDL_PumpEvents(); // update the keyboard state
+
 	//entities movements
 	move_player(Entities[0], T);
 
@@ -60,8 +62,13 @@ void update::step(float T){
 					copy.push_back(ent);
 		Entities=copy;
 				
-
+//load save
+	if (state[SDL_SCANCODE_S]) 
+		save();
 	
+	if (state[SDL_SCANCODE_L]) 
+		load();
+
 	//renderization part
 	Viewer.clear();
 
@@ -88,6 +95,41 @@ void update::step(float T){
 }
 
 
+void update::save(){
+	json j;
+	std::string str;
+	std::ofstream arquivo1;
+
+	//transforms class update object into json object
+	j["Entities"]=Entities;
+//saves to a file
+	str = j.dump(); 
+	arquivo1.open("save.json");
+	arquivo1 << str;
+	arquivo1.close();
+	
+}
+void update::load(){
+	std::stringstream s;
+	json j;
+	std::ifstream arquivo;
+
+	arquivo.open("save.json");
+	if (arquivo.is_open() ) {
+		s << arquivo.rdbuf();
+		j= json::parse(s.str());
+		arquivo.close();
+		//converts to vector and assigns
+		Entities=j["Entities"].get<vector<entity>>();;
+		//loads textures
+		for(entity  &ent: Entities){
+			ent.load_texture(Viewer.return_renderer());
+		}
+	} else {
+		std::cout << "Error reading save file" << std::endl;
+	}
+
+}
 
 void update::render_entity(entity &ent){
 	SDL_Rect target;

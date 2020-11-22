@@ -4,7 +4,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "INIReader.h"
+#include "../include/json.hpp"
 
+using nlohmann::json;
 //model
 class entity{
 	private:
@@ -26,6 +28,8 @@ class entity{
 		std::shared_ptr<SDL_Texture> standing;
 
 	public:
+
+		NLOHMANN_DEFINE_TYPE_INTRUSIVE(entity, x, y ,health ,type, speed, height, width, team, facing, attack_damage, range, attack_rate );
 		void load_team(int new_team);
 		void load_texture(SDL_Renderer * renderer);
 		int return_team();

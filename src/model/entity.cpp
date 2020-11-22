@@ -88,19 +88,22 @@ void entity::load(SDL_Renderer * renderer, int get_type, int new_team){
 
 
 }
-/*
+
 void entity::load_texture(SDL_Renderer * renderer){
 
 	if(type==0)
-		standing = IMG_LoadTexture(renderer, "../assets/cop_standing.png");
+		standing=shared_ptr<SDL_Texture> (IMG_LoadTexture(renderer, "../assets/cop_standing.png"), SDL_DestroyTexture);
+
 	if(type==1)
-		standing = IMG_LoadTexture(renderer, "../assets/necromancer_standing.png");
+		standing=shared_ptr<SDL_Texture> (IMG_LoadTexture(renderer, "../assets/necromancer_standing.png"), SDL_DestroyTexture);
+
 	if(type==2)
-		standing = IMG_LoadTexture(renderer, "../assets/zombie_standing.png");
+		standing=shared_ptr<SDL_Texture> (IMG_LoadTexture(renderer, "../assets/zombie_standing.png"), SDL_DestroyTexture);
+
 	if(type==10)
-		standing = IMG_LoadTexture(renderer, "../assets/grave.png");
+		standing=shared_ptr<SDL_Texture> (IMG_LoadTexture(renderer, "../assets/grave.png"), SDL_DestroyTexture);
 }
-*/
+
 float entity::rwidth(){
 	return width;
 }

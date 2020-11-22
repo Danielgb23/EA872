@@ -10,6 +10,7 @@ project(madrugada_dos_mortos)
 #
 add_executable(madruga src/main.cpp)
 
+
 # Especificar onde estao os header files
 include_directories(include)
 
