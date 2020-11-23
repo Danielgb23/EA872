@@ -13,28 +13,29 @@ using std::chrono::system_clock;
 
 int main() {
 	update controller;
-	
-	auto tempo = std::chrono::steady_clock::now()
-		
+
+	auto tempo = std::chrono::steady_clock::now();
+
 	// Variaveis para verificar eventos
-	
+
 	SDL_Event evento; // eventos discretos
-	// Controlador:
 	bool rodando = true;
 
+	int i=0;
+	int avg=0;
 	while(rodando){
-	//	viewer.render(player1.return_texture(), target);
-		controller.step(0.005);
+
+		controller.step(0.017);
+		i++;
+
 		while (SDL_PollEvent(&evento)) {
 			if (evento.type == SDL_QUIT) {
 				rodando = false;
 			}
 		} 
 
-		// Delay para diminuir o framerate
-		//SDL_Delay(0.01);
-
-		std::this_thread::sleep_until(tempo + std::chrono::milliseconds(5));
+		//to reduce framerate to appropriate time
+		std::this_thread::sleep_until(tempo + std::chrono::milliseconds(17));
 	}
 
 	return 0;
