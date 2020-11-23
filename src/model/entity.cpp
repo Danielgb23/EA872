@@ -137,7 +137,7 @@ int	entity::return_health(){
 
 int	entity::attack(float time_step){
 	if(attack_cooldown <=0){
-		attack_cooldown=1/attack_rate;
+		attack_cooldown=100/attack_rate;
 		return attack_damage;
 	}
 	attack_cooldown-=time_step;
@@ -157,8 +157,8 @@ void	entity::pos(float &pos_x, float &pos_y){
 	pos_y=y;
 }
 
-int	entity::return_speed(){
-	return speed;
+float	entity::return_speed(){
+	return speed/100;
 }
 
 int	entity::return_dig_rate(){

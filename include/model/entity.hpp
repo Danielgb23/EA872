@@ -22,7 +22,7 @@ class entity{
 		int facing;
 		int attack_damage;
 		float range;
-		int attack_rate;
+		float attack_rate;
 		float attack_cooldown;
 		//SDL_Texture * standing;
 		std::shared_ptr<SDL_Texture> standing;
@@ -58,7 +58,7 @@ class entity{
 //updates the entity's position according to the fuction input
 		void update_pos(float x, float y);
 
-		int return_speed();
+		float return_speed();
 		int rtype();
 		float rrange();
 		int return_dig_rate();

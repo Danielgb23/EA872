@@ -8,11 +8,11 @@
 #include "../include/controller/update.hpp"
 #include <chrono>
 #include <thread>
-
-using std::chrono::system_clock;
+using namespace std::chrono; 
 
 int main() {
 	update controller;
+	int duration_step;
 
 	auto tempo = std::chrono::steady_clock::now();
 
@@ -21,12 +21,10 @@ int main() {
 	SDL_Event evento; // eventos discretos
 	bool rodando = true;
 
-	int i=0;
-	int avg=0;
 	while(rodando){
-
-		controller.step(0.017);
-		i++;
+		auto start = high_resolution_clock::now(); 
+		//runs a game step
+		controller.step( ((float)duration_step)/1000 );
 
 		while (SDL_PollEvent(&evento)) {
 			if (evento.type == SDL_QUIT) {
@@ -34,8 +32,12 @@ int main() {
 			}
 		} 
 
+		auto stop = high_resolution_clock::now(); 
+
+		auto duration = duration_cast<milliseconds>(stop - start); 
+		duration_step=duration.count()+4;
 		//to reduce framerate to appropriate time
-		std::this_thread::sleep_until(tempo + std::chrono::milliseconds(17));
+		std::this_thread::sleep_until(tempo + std::chrono::milliseconds(duration_step));
 	}
 
 	return 0;
