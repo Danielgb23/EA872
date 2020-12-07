@@ -82,6 +82,7 @@ void entity::load(SDL_Renderer * renderer, int get_type, int new_team){
 		health = reader.GetInteger("stats", "health", -1);
 		height = reader.GetReal("stats", "height", -1);
 		width = reader.GetReal("stats", "width", -1);
+		attack_rate = 0;
 
 	}
 

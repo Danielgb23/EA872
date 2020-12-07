@@ -15,6 +15,7 @@
 #include "../include/model/mapa.hpp"
 #include "../include/view/view.hpp"
 #include "../include/json.hpp"
+#include "../include/controller/net.hpp"
 
 using namespace std;
 
@@ -30,7 +31,10 @@ class update{
 	private:
 		view Viewer;
 		terrain Map;
+		net udp;
 		vector <entity> Entities;
+		int spectator=0;
+		int send=0;
 		void spawns_entity(int type, int team, float x, float  y);
 		void save();
 		void load();

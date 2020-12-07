@@ -10,6 +10,10 @@ project(madrugada_dos_mortos)
 #
 add_executable(madruga src/main.cpp)
 
+#flag pthread
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
 
 # Especificar onde estao os header files
 include_directories(include)
@@ -24,10 +28,13 @@ target_link_libraries(madruga mapa)
 add_library(view src/view/view.cpp)
 target_link_libraries(madruga view)
 
+add_library(net src/controller/net.cpp)
+
 add_library(update src/controller/update.cpp)
 target_link_libraries(madruga update)
 target_link_libraries(update entity)
 target_link_libraries(update mapa)
+target_link_libraries(update net)
 
 add_library(INIReader src/INIReader.cpp)
 target_link_libraries(madruga INIReader)
@@ -51,6 +58,7 @@ target_link_libraries(update SDL2_image)
 target_link_libraries(entity SDL2_image)
 target_link_libraries(update SDL2_ttf)
 target_link_libraries(view SDL2_ttf)
+target_link_libraries(update Threads::Threads)
 
 # Automatizacao do Doxygen
 find_package(Doxygen REQUIRED dot)
@@ -64,4 +72,5 @@ set(DOXYGEN_UML_LOOK YES)
 set(DOXYGEN_CLASS_GRAPH YES)
 
 doxygen_add_docs(doc)
+
 

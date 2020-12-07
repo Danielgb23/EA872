@@ -37,38 +37,81 @@ update::update(){
 void update::step(float T){
 	SDL_PumpEvents(); // update the keyboard state
 
-	//entities movements
-	move_player(Entities[0], T);
+	//load save
+	if (state[SDL_SCANCODE_S]) 
+		save();
 
-	for(entity & zombie: Entities){
-		if(zombie.rtype()==2)
-			move_zombie(zombie, T);
+	if (state[SDL_SCANCODE_L]) 
+		load();
+	//spectator mode
+	if (state[SDL_SCANCODE_E] && !spectator) {
+		spectator=42;
+	}
+	//send data
+	if (state[SDL_SCANCODE_R] && !send) {
+		send=42;
 	}
 
-	//attacks
-	for(entity  &ent: Entities){
-		if(ent.rtype() != 1 )
-			attack_closest(ent, T);
-	}
-	dig_grave(Entities[0], T);
+	if(spectator){
 
-	//kills the dead
-	//copies the alive to a vector and it back to Entities
-	vector <entity> copy;
+		json j;
+		std::string str;
+		str=udp.get();
+		if (!json::accept(str))
+		{
+			std::cerr << "parse error" << std::endl;
+			std::cerr << str<< std::endl;
+
+		}
+		else{
+			j= json::parse(str);
+
+			Entities=j["Entities"].get<vector<entity>>();
+			//loads textures
+			for(entity  &ent: Entities){
+				ent.load_texture(Viewer.return_renderer());
+			}
+		}
+
+	}
+
+	else {
+		//entities movements
+		move_player(Entities[0], T);
+
+		for(entity & zombie: Entities){
+			if(zombie.rtype()==2)
+				move_zombie(zombie, T);
+		}
+
+		//attacks
+		for(entity  &ent: Entities){
+			if(ent.rtype() != 1 )
+				attack_closest(ent, T);
+		}
+		dig_grave(Entities[0], T);
+
+		//kills the dead
+		//copies the alive to a vector and it back to Entities
+		vector <entity> copy;
 		if(!Entities.empty())
 			for(entity ent: Entities)
 				//if alive
 				if(ent.return_health() > 0)
 					copy.push_back(ent);
 		Entities=copy;
-				
-//load save
-	if (state[SDL_SCANCODE_S]) 
-		save();
-	
-	if (state[SDL_SCANCODE_L]) 
-		load();
 
+
+		if(send){
+			json j;
+			std::string str;
+
+			j["Entities"]=Entities;
+
+			str = j.dump(); 
+			udp.send(str);
+		}
+	}
 	//renderization part
 	Viewer.clear();
 
@@ -85,7 +128,7 @@ void update::step(float T){
 	vector <entity> sorted=Entities;
 	//sorts 'sorted' by the entities's y
 	std::sort(sorted.begin(), sorted.end(), [](entity  a, entity b){ return a.ry() < b.ry(); });
-	
+
 	for(entity ent: sorted){
 		render_entity(ent);
 	}
@@ -102,12 +145,12 @@ void update::save(){
 
 	//transforms class update object into json object
 	j["Entities"]=Entities;
-//saves to a file
+	//saves to a file
 	str = j.dump(); 
 	arquivo1.open("save.json");
 	arquivo1 << str;
 	arquivo1.close();
-	
+
 }
 void update::load(){
 	std::stringstream s;
@@ -120,7 +163,7 @@ void update::load(){
 		j= json::parse(s.str());
 		arquivo.close();
 		//converts to vector and assigns
-		Entities=j["Entities"].get<vector<entity>>();;
+		Entities=j["Entities"].get<vector<entity>>();
 		//loads textures
 		for(entity  &ent: Entities){
 			ent.load_texture(Viewer.return_renderer());
@@ -164,8 +207,8 @@ void update::render_entity(entity &ent){
 //creates shared pointer to host an entity until it's out of scope
 void ::update::spawns_entity(int type, int team, float x, float  y){
 	entity ent;
-//	ent.load( Viewer.return_renderer(), type, team );
-//	ent.update_pos(x,y);
+	//	ent.load( Viewer.return_renderer(), type, team );
+	//	ent.update_pos(x,y);
 	Entities.push_back(std::move(ent));
 	//sets up the entity in the last element in the vector
 	Entities.back().load( Viewer.return_renderer(), type, team );
@@ -240,7 +283,7 @@ void update::attack_closest(entity &ent, float T){
 	if(closest==nullptr)
 		return;
 	if(clst_dist<=ent.rrange()){
-		
+
 		int golpe=ent.attack(T);
 		closest->take_damage(golpe);
 
