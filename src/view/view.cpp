@@ -1,29 +1,10 @@
-
-
 #include "../../include/view/view.hpp"
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
 using namespace std;
 
 SDL_Renderer * view::return_renderer(){
 	return renderer;
 }
-/*
-SDL_Texture *  get_texture(int type){
-
-	if(type==0)
-		standing = IMG_LoadTexture(renderer, "../assets/cop_standing.png");
-	if(type==1)
-		standing = IMG_LoadTexture(renderer, "../assets/necromancer_standing.png");
-	if(type==2)
-		standing = IMG_LoadTexture(renderer, "../assets/zombie_standing.png");
-	if(type==10)
-		standing = IMG_LoadTexture(renderer, "../assets/grave.png");
-}
-
-*/
 
 view::view(){
 	INIReader reader("../config/view.ini");
@@ -44,6 +25,8 @@ view::view(){
 	}
 	this->init_window();
 	this->init_render();
+
+	Assets.load(renderer);
 	// Select the color for drawing. It is set to red here.
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
@@ -99,6 +82,9 @@ void view::clear(){
 }
 void view::present(){
 	SDL_RenderPresent(renderer);
+}
+SDL_Texture * view::entity_texture(int type){
+	Assets.return_texture(type);
 }
 void view::render(SDL_Texture * texture, SDL_Rect target){
 	//Draws the target element 

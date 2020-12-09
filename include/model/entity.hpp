@@ -31,12 +31,10 @@ class entity{
 
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE(entity, x, y ,health ,type, speed, height, width, team, facing, attack_damage, range, attack_rate );
 		void load_team(int new_team);
-		void load_texture(SDL_Renderer * renderer);
 		int return_team();
 		float rwidth();
 		int attack(float time_step);
-		SDL_Texture * return_texture();
-		void load(SDL_Renderer * renderer, int get_type, int new_team);
+		void load(int get_type, int new_team);
 		entity();
 		~entity();
 		void load();

@@ -13,12 +13,11 @@ void entity::load_team(int new_team){
 }
 
 //loads the entity texture
-void entity::load(SDL_Renderer * renderer, int get_type, int new_team){
+void entity::load(int get_type, int new_team){
 	type=get_type;
 	team=new_team;
 	//type cop
 	if(type==0){
-		standing=shared_ptr<SDL_Texture> (IMG_LoadTexture(renderer, "../assets/cop_standing.png"), SDL_DestroyTexture);
 
 		INIReader reader("../config/cop.ini");
 		if (reader.ParseError() < 0) {
@@ -36,7 +35,6 @@ void entity::load(SDL_Renderer * renderer, int get_type, int new_team){
 	}
 	//player
 	if(type==1){
-		standing=shared_ptr<SDL_Texture> (IMG_LoadTexture(renderer, "../assets/necromancer_standing.png"), SDL_DestroyTexture);
 
 		INIReader reader("../config/player.ini");
 		if (reader.ParseError() < 0) {
@@ -54,7 +52,6 @@ void entity::load(SDL_Renderer * renderer, int get_type, int new_team){
 	}
 	//zombie
 	if(type==2){
-		standing=shared_ptr<SDL_Texture> (IMG_LoadTexture(renderer, "../assets/zombie_standing.png"), SDL_DestroyTexture);
 
 		INIReader reader("../config/zombie.ini");
 		if (reader.ParseError() < 0) {
@@ -72,8 +69,6 @@ void entity::load(SDL_Renderer * renderer, int get_type, int new_team){
 	}
 	if(type==10){
 
-		standing=shared_ptr<SDL_Texture> (IMG_LoadTexture(renderer, "../assets/grave.png"), SDL_DestroyTexture);
-
 		INIReader reader("../config/grave.ini");
 		if (reader.ParseError() < 0) {
 			std::cout << "Can't load 'grave.ini'\n";
@@ -90,20 +85,6 @@ void entity::load(SDL_Renderer * renderer, int get_type, int new_team){
 
 }
 
-void entity::load_texture(SDL_Renderer * renderer){
-
-	if(type==0)
-		standing=shared_ptr<SDL_Texture> (IMG_LoadTexture(renderer, "../assets/cop_standing.png"), SDL_DestroyTexture);
-
-	if(type==1)
-		standing=shared_ptr<SDL_Texture> (IMG_LoadTexture(renderer, "../assets/necromancer_standing.png"), SDL_DestroyTexture);
-
-	if(type==2)
-		standing=shared_ptr<SDL_Texture> (IMG_LoadTexture(renderer, "../assets/zombie_standing.png"), SDL_DestroyTexture);
-
-	if(type==10)
-		standing=shared_ptr<SDL_Texture> (IMG_LoadTexture(renderer, "../assets/grave.png"), SDL_DestroyTexture);
-}
 
 float entity::rwidth(){
 	return width;
@@ -128,9 +109,6 @@ void entity::addy(float load_y){
 	y+=load_y;
 }
 
-SDL_Texture * entity::return_texture(){
-	return standing.get();
-}
 
 int	entity::return_health(){
 	return health;
@@ -151,6 +129,7 @@ float entity::rrange(){
 //the entity takes 'damage' amount of damage
 int	entity::take_damage(int damage){
 	health-=damage;
+	return health;
 }
 //loads the variables x and y  with the entity current position
 void	entity::pos(float &pos_x, float &pos_y){

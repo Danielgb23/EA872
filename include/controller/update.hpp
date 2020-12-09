@@ -28,8 +28,10 @@ class update{
 		void step(float T);
 		update();
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE(update, Entities);
+		int is_spectator();
 	private:
 		view Viewer;
+
 		terrain Map;
 		net udp;
 		vector <entity> Entities;

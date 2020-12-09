@@ -1,4 +1,9 @@
 #include "../include/controller/update.hpp"
+
+#include <chrono>
+#include <thread>
+using namespace std::chrono; 
+
 using namespace std;
 #define ENTITY_COLLISION_DIST 0.5
 
@@ -33,8 +38,13 @@ update::update(){
 
 }
 
+int update::is_spectator(){
+	return spectator;
+}
 
 void update::step(float T){
+
+
 	SDL_PumpEvents(); // update the keyboard state
 
 	//load save
@@ -53,7 +63,7 @@ void update::step(float T){
 	}
 
 	if(spectator){
-
+		auto start = high_resolution_clock::now(); 
 		json j;
 		std::string str;
 		str=udp.get();
@@ -68,11 +78,11 @@ void update::step(float T){
 
 			Entities=j["Entities"].get<vector<entity>>();
 			//loads textures
-			for(entity  &ent: Entities){
-				ent.load_texture(Viewer.return_renderer());
-			}
 		}
 
+		auto stop = high_resolution_clock::now(); 
+		auto duration = duration_cast<milliseconds>(stop - start); 
+		cout << duration.count() << endl;
 	}
 
 	else {
@@ -164,10 +174,6 @@ void update::load(){
 		arquivo.close();
 		//converts to vector and assigns
 		Entities=j["Entities"].get<vector<entity>>();
-		//loads textures
-		for(entity  &ent: Entities){
-			ent.load_texture(Viewer.return_renderer());
-		}
 	} else {
 		std::cout << "Error reading save file" << std::endl;
 	}
@@ -179,7 +185,9 @@ void update::render_entity(entity &ent){
 	int h,w;
 	string text;
 	int render_factor=25;
-	SDL_QueryTexture(ent.return_texture(), nullptr, nullptr, &w, &h);
+
+ 
+	SDL_QueryTexture(Viewer.entity_texture(ent.rtype()), nullptr, nullptr, &w, &h);
 	//renders the image taller than it's movement
 	target.w=(int)(render_factor*ent.rwidth());
 	target.h=(int)((float)h/(float)w*target.w);
@@ -187,7 +195,7 @@ void update::render_entity(entity &ent){
 	target.x = ent.rx()*render_factor;
 	target.y = ent.ry()*render_factor-target.h;
 
-	Viewer.render(ent.return_texture(), target);
+	Viewer.render(Viewer.entity_texture(ent.rtype()), target);
 
 	//renders text with health
 	SDL_Rect Message_rect; 
@@ -211,7 +219,7 @@ void ::update::spawns_entity(int type, int team, float x, float  y){
 	//	ent.update_pos(x,y);
 	Entities.push_back(std::move(ent));
 	//sets up the entity in the last element in the vector
-	Entities.back().load( Viewer.return_renderer(), type, team );
+	Entities.back().load(type, team );
 	Entities.back().update_pos(x,y);
 }
 

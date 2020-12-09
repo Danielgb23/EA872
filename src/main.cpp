@@ -36,8 +36,10 @@ int main() {
 
 		auto duration = duration_cast<milliseconds>(stop - start); 
 		duration_step=duration.count()+4;
+
 		//to reduce framerate to appropriate time
-		std::this_thread::sleep_until(tempo + std::chrono::milliseconds(duration_step));
+		if(!controller.is_spectator())
+			std::this_thread::sleep_until(tempo + std::chrono::milliseconds(duration_step));
 	}
 
 	return 0;

@@ -15,5 +15,8 @@ Depois faremos o controler com as classes necessarias para os players poderem co
 
 # Dependencias
 sdl2 ttf:
+
 sudo apt-get install libsdl2-ttf-dev
 
+#para doxygen
+sudo apt install graphviz

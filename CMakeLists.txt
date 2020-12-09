@@ -25,8 +25,13 @@ target_link_libraries(madruga entity)
 add_library(mapa src/model/mapa.cpp)
 target_link_libraries(madruga mapa)
 
+
+add_library(assets src/view/assets.cpp)
+target_link_libraries(madruga assets)
+
 add_library(view src/view/view.cpp)
 target_link_libraries(madruga view)
+target_link_libraries(view assets)
 
 add_library(net src/controller/net.cpp)
 
@@ -35,6 +40,7 @@ target_link_libraries(madruga update)
 target_link_libraries(update entity)
 target_link_libraries(update mapa)
 target_link_libraries(update net)
+target_link_libraries(update assets)
 
 add_library(INIReader src/INIReader.cpp)
 target_link_libraries(madruga INIReader)
@@ -43,8 +49,6 @@ target_link_libraries(entity INIReader)
 add_library(ini src/ini.c)
 target_link_libraries(INIReader ini)
 
-#add_library(update src/controller/update.cpp)
-#target_link_libraries(madruga update)
 
 
 # Garantir que usaremos C++11 (ou superior, se preciso)
