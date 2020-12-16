@@ -40,7 +40,7 @@ update::~update(){
 	client=0;
 
 	//sends a package to itself so the thread is receive_from method stops waiting for a package
-	udp.send("", "127.0.0.1", 9003 );
+	udp.send("", "127.0.0.1", 9001 );
 	udp.send("", "127.0.0.1", 9002 );
 	//waits for thread
 	t.join();
@@ -143,7 +143,7 @@ void update::step(float T){
 		j["player"]=player_id;
 
 		//udp.send(j.dump());
-		udp.send(j.dump(), "127.0.0.1", 9003);
+		udp.send(j.dump());
 
 
 	}
@@ -185,7 +185,7 @@ void update::server_net(){
 
 	while(server){
 		//str=udp.get(ip);
-		str=udp.get(ip, 9003);
+		str=udp.get(ip);
 		if (!json::accept(str))
 		{
 			std::cerr << "parse error on player remote data or end of program" << std::endl;

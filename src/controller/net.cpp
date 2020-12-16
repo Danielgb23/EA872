@@ -62,6 +62,7 @@ void net::send(std::string str, std::string ip, int port){
 
 }
 
+
 std::string net::get(std::string &ip, int port){
 
 	udp::endpoint the_endpoint(udp::v4(), port);
