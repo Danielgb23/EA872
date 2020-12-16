@@ -22,6 +22,8 @@ include_directories(include)
 add_library(entity src/model/entity.cpp)
 target_link_libraries(madruga entity)
 
+add_library(player src/model/player.cpp)
+
 add_library(mapa src/model/mapa.cpp)
 target_link_libraries(madruga mapa)
 
@@ -38,9 +40,11 @@ add_library(net src/controller/net.cpp)
 add_library(update src/controller/update.cpp)
 target_link_libraries(madruga update)
 target_link_libraries(update entity)
+target_link_libraries(update view)
 target_link_libraries(update mapa)
 target_link_libraries(update net)
 target_link_libraries(update assets)
+target_link_libraries(update player)
 
 add_library(INIReader src/INIReader.cpp)
 target_link_libraries(madruga INIReader)

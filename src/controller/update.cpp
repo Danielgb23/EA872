@@ -1,17 +1,13 @@
 #include "../include/controller/update.hpp"
 
-#include <chrono>
-#include <thread>
-using namespace std::chrono; 
-
 using namespace std;
 #define ENTITY_COLLISION_DIST 0.5
 
 update::update(){
-	state= SDL_GetKeyboardState(nullptr); // estado do teclado
+	state= SDL_GetKeyboardState(&keyboard_vsize); // estado do teclado
 	Map.init(Viewer.return_renderer());
 	//player
-	spawns_entity(1, 2, 10, 10);
+	//spawns_entity(1, 2, 10, 10);
 
 	//graves
 	spawns_entity(10, -1, 20, 20);
@@ -38,8 +34,20 @@ update::update(){
 
 }
 
-int update::is_spectator(){
-	return spectator;
+update::~update(){
+	//flag that stops extra thread
+	server=0;
+	client=0;
+
+	//sends a package to itself so the thread is receive_from method stops waiting for a package
+	udp.send("", "127.0.0.1", 9003 );
+	udp.send("", "127.0.0.1", 9002 );
+	//waits for thread
+	t.join();
+}
+
+int update::is_server(){
+	return server;
 }
 
 void update::step(float T){
@@ -53,41 +61,43 @@ void update::step(float T){
 
 	if (state[SDL_SCANCODE_L]) 
 		load();
-	//spectator mode
-	if (state[SDL_SCANCODE_E] && !spectator) {
-		spectator=42;
-	}
-	//send data
-	if (state[SDL_SCANCODE_R] && !send) {
-		send=42;
-	}
 
-	if(spectator){
-		auto start = high_resolution_clock::now(); 
-		json j;
-		std::string str;
-		str=udp.get();
-		if (!json::accept(str))
-		{
-			std::cerr << "parse error" << std::endl;
-			std::cerr << str<< std::endl;
-
-		}
-		else{
-			j= json::parse(str);
-
-			Entities=j["Entities"].get<vector<entity>>();
-			//loads textures
-		}
-
-		auto stop = high_resolution_clock::now(); 
-		auto duration = duration_cast<milliseconds>(stop - start); 
-		cout << duration.count() << endl;
+	//server mode
+	if (state[SDL_SCANCODE_E] && !server) {
+		server=42;
+		t=std::thread(&update::server_net, this);
+		cout<< "Running server" << endl;
 	}
 
-	else {
+	if (state[SDL_SCANCODE_R] && !client) {
+		client=42;
+		t=std::thread(&update::client_net, this);
+		cout<< "Running client" << endl;
+	}
+
+	if(server){
+		//thread to wait for udp messages from players
 		//entities movements
-		move_player(Entities[0], T);
+		for (Player plr: Players){
+			Uint8 * player_state;
+
+			player_state=&plr.keyboard()[0];		
+
+			//if the plr keyboard is not empty
+			if(player_state){
+				//finds the players correct entity
+				for (entity & ent : Entities){
+					//of type player
+					if(ent.rtype() == 1)
+						//team corresponding to ID
+						if(ent.return_team() == plr.id()){
+							//move and attack graves
+							move_player(ent, T, player_state);
+							dig_grave(ent, T, player_state);
+						}
+				}
+			}
+		}
 
 		for(entity & zombie: Entities){
 			if(zombie.rtype()==2)
@@ -99,7 +109,6 @@ void update::step(float T){
 			if(ent.rtype() != 1 )
 				attack_closest(ent, T);
 		}
-		dig_grave(Entities[0], T);
 
 		//kills the dead
 		//copies the alive to a vector and it back to Entities
@@ -111,71 +120,136 @@ void update::step(float T){
 					copy.push_back(ent);
 		Entities=copy;
 
+		//sends Entity data to all players
+		json k, json_plr;
+		std::string dump;
+		k["Entities"]=Entities;
 
-		if(send){
-			json j;
-			std::string str;
+		for (Player plr: Players){
+			json_plr=k;
+			json_plr["player"]=plr.id();	
+			//	udp.send(json_plr.dump(), plr.ip() );
+			udp.send(json_plr.dump(), plr.ip(), 9002 );
+		}
 
-			j["Entities"]=Entities;
+	}
 
-			str = j.dump(); 
-			udp.send(str);
+	else if (client){
+		//sends keyboard state
+		json j;
+		std::vector<Uint8> keyboard (state, &state[keyboard_vsize]);
+		j["keyboard"]=keyboard;
+		//player's id which is zero if the server didn't initialize him
+		j["player"]=player_id;
+
+		//udp.send(j.dump());
+		udp.send(j.dump(), "127.0.0.1", 9003);
+
+
+	}
+	//rendering part
+	if(client || server){
+		//renderization part
+		Viewer.clear();
+
+		//background
+		SDL_Rect target;
+		target.w=Viewer.rwidth();
+		target.h=Viewer.rheight();
+		target.x=0;
+		target.y=0;
+		Viewer.render(Map.rbackground(), target);
+
+		//entities
+		//creates vector to sort by y	
+		vector <entity> sorted=Entities;
+		//sorts 'sorted' by the entities's y
+		std::sort(sorted.begin(), sorted.end(), [](entity  a, entity b){ return a.ry() < b.ry(); });
+
+		for(entity ent: sorted){
+			render_entity(ent);
+		}
+
+		Viewer.present();
+	}
+}
+
+void update::server_net(){
+	int player, new_player_number;
+	bool already_listed=false;
+
+	//player input
+	json j;
+	std::string str, ip;
+	std::vector<Uint8> keyboard;
+
+	while(server){
+		//str=udp.get(ip);
+		str=udp.get(ip, 9003);
+		if (!json::accept(str))
+		{
+			std::cerr << "parse error on player remote data or end of program" << std::endl;
+			std::cerr << str<< std::endl;
+
+		}
+		else{
+			j= json::parse(str);
+			//player=j["player"].get<int>(); //this is supposed to convert to int
+			player=j["player"];
+
+			//new player
+			if(player==0){
+				for(Player plr : Players){
+					if(ip.compare(plr.ip()) ==0)	
+						already_listed=true;
+				}
+				if(!already_listed){
+					//send package with new player number
+					//if it's lost the packages with the entities also contain the player numbers
+					new_player_number=Players.size()+1;
+
+					//creates the player entity in the game
+					spawns_entity(1, new_player_number, 10, 10);
+
+					//creates the player object
+					Player new_player(new_player_number , ip);
+					Players.push_back(new_player);
+				}
+
+			}
+
+			else{
+				keyboard=j["keyboard"].get<vector<Uint8>>();
+				//updates keyboard according to received package
+				Players[player-1].keyboard(keyboard);
+			}
+
 		}
 	}
-	//renderization part
-	Viewer.clear();
-
-	//background
-	SDL_Rect target;
-	target.w=Viewer.rwidth();
-	target.h=Viewer.rheight();
-	target.x=0;
-	target.y=0;
-	Viewer.render(Map.rbackground(), target);
-
-	//entities
-	//creates vector to sort by y	
-	vector <entity> sorted=Entities;
-	//sorts 'sorted' by the entities's y
-	std::sort(sorted.begin(), sorted.end(), [](entity  a, entity b){ return a.ry() < b.ry(); });
-
-	for(entity ent: sorted){
-		render_entity(ent);
-	}
-
-	Viewer.present();
-
 }
 
-
-void update::save(){
+void update::client_net(){
+	//receives entities states
 	json j;
 	std::string str;
-	std::ofstream arquivo1;
+	while(client){
 
-	//transforms class update object into json object
-	j["Entities"]=Entities;
-	//saves to a file
-	str = j.dump(); 
-	arquivo1.open("save.json");
-	arquivo1 << str;
-	arquivo1.close();
+		//str=udp.get();
+		std::string ip;
+		str=udp.get(ip, 9002);
 
-}
-void update::load(){
-	std::stringstream s;
-	json j;
-	std::ifstream arquivo;
+		if (!json::accept(str))
+		{
+			std::cerr << "client remote data from server parse error or end of program" << std::endl;
+			std::cerr << str<< std::endl;
 
-	arquivo.open("save.json");
-	if (arquivo.is_open() ) {
-		s << arquivo.rdbuf();
-		j= json::parse(s.str());
-		arquivo.close();
-		//converts to vector and assigns
-		Entities=j["Entities"].get<vector<entity>>();
-	} else {
-		std::cout << "Error reading save file" << std::endl;
+		}
+		else{
+			j= json::parse(str);
+			//get's player id from server which flags that it was initialized(nonzero)
+			player_id=j["player"];
+			Entities=j["Entities"].get<vector<entity>>();
+		}
 	}
 
 }
@@ -186,7 +260,7 @@ void update::render_entity(entity &ent){
 	string text;
 	int render_factor=25;
 
- 
+
 	SDL_QueryTexture(Viewer.entity_texture(ent.rtype()), nullptr, nullptr, &w, &h);
 	//renders the image taller than it's movement
 	target.w=(int)(render_factor*ent.rwidth());
@@ -213,7 +287,7 @@ void update::render_entity(entity &ent){
 
 }
 //creates shared pointer to host an entity until it's out of scope
-void ::update::spawns_entity(int type, int team, float x, float  y){
+entity * update::spawns_entity(int type, int team, float x, float  y){
 	entity ent;
 	//	ent.load( Viewer.return_renderer(), type, team );
 	//	ent.update_pos(x,y);
@@ -221,24 +295,23 @@ void ::update::spawns_entity(int type, int team, float x, float  y){
 	//sets up the entity in the last element in the vector
 	Entities.back().load(type, team );
 	Entities.back().update_pos(x,y);
+	return &Entities.back();
 }
 
-void update::move_player(entity &player, float T){
+void update::move_player(entity &player, float T, const Uint8* player_state){
 	float speed=player.return_speed();
 	float dist=speed*T;
-	// Polling of events
-	SDL_PumpEvents(); // update the keyboard state
 
 	//if keyboard up is pressed
-	if (state[SDL_SCANCODE_UP]) 
+	if (player_state[SDL_SCANCODE_UP]) 
 		player.addy(-dist*collision_up(player));
-	else if (state[SDL_SCANCODE_DOWN]) 
+	else if (player_state[SDL_SCANCODE_DOWN]) 
 		player.addy(dist*collision_down(player));
 
 	//allows for simultaneous movement horizontal vertical
-	if (state[SDL_SCANCODE_LEFT]) 
+	if (player_state[SDL_SCANCODE_LEFT]) 
 		player.addx(-dist*collision_left(player));
-	else if (state[SDL_SCANCODE_RIGHT]) 
+	else if (player_state[SDL_SCANCODE_RIGHT]) 
 		player.addx(dist*collision_right(player));
 } 
 
@@ -298,13 +371,12 @@ void update::attack_closest(entity &ent, float T){
 	}
 }
 //digs closest grave to the player if within range
-void update::dig_grave(entity &player, float T){
+void update::dig_grave(entity &player, float T, const Uint8 * plr_state){
 	entity * closest=nullptr;
 	float clst_dist=100000000;
-	SDL_PumpEvents(); // update the keyboard state
 
 	//if keyboard up is pressed
-	if (state[SDL_SCANCODE_SPACE]) {
+	if (plr_state[SDL_SCANCODE_SPACE]) {
 		for (entity & grave : Entities)
 			//if is a grave (type 10) 
 			if(grave.rtype()==10 )
@@ -384,3 +456,38 @@ float update::collision_right(entity &moved){
 
 	return 1;
 }
+
+
+
+void update::save(){
+	json j;
+	std::string str;
+	std::ofstream arquivo1;
+
+	//transforms class update object into json object
+	j["Entities"]=Entities;
+	//saves to a file
+	str = j.dump(); 
+	arquivo1.open("save.json");
+	arquivo1 << str;
+	arquivo1.close();
+
+}
+void update::load(){
+	std::stringstream s;
+	json j;
+	std::ifstream arquivo;
+
+	arquivo.open("save.json");
+	if (arquivo.is_open() ) {
+		s << arquivo.rdbuf();
+		j= json::parse(s.str());
+		arquivo.close();
+		//converts to vector and assigns
+		Entities=j["Entities"].get<vector<entity>>();
+	} else {
+		std::cout << "Error reading save file" << std::endl;
+	}
+
+}
+

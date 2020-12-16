@@ -11,7 +11,13 @@ class net {
 
 	public:
 		net();
+
 		void send(std::string str);
+		void send(std::string str, std::string ip);
+		void send(std::string str, std::string ip, int port);
+
+		std::string get(std::string &ip, int port);
+		std::string get(std::string &ip);
 		std::string get();
 
 	private:

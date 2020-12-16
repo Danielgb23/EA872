@@ -21,6 +21,7 @@ int main() {
 	SDL_Event evento; // eventos discretos
 	bool rodando = true;
 
+	
 	while(rodando){
 		auto start = high_resolution_clock::now(); 
 		//runs a game step
@@ -38,7 +39,7 @@ int main() {
 		duration_step=duration.count()+4;
 
 		//to reduce framerate to appropriate time
-		if(!controller.is_spectator())
+		if(!controller.is_server())
 			std::this_thread::sleep_until(tempo + std::chrono::milliseconds(duration_step));
 	}
 
