@@ -35,13 +35,16 @@ update::update(){
 }
 
 update::~update(){
+	//sends a package to itself so the thread is receive_from method stops waiting for a package
+	if(server)
+		udp.send("", "127.0.0.1", 9001 );
+	if(client)
+		udp.send("", "127.0.0.1", 9002 );
+
 	//flag that stops extra thread
 	server=0;
 	client=0;
 
-	//sends a package to itself so the thread is receive_from method stops waiting for a package
-	udp.send("", "127.0.0.1", 9001 );
-	udp.send("", "127.0.0.1", 9002 );
 	//waits for thread
 	t.join();
 }
@@ -195,7 +198,7 @@ void update::server_net(){
 		else{
 			j= json::parse(str);
 			//player=j["player"].get<int>(); //this is supposed to convert to int
-			player=j["player"];
+			player=j["player"].get<int>();
 
 			//new player
 			if(player==0){
