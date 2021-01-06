@@ -6,6 +6,10 @@
 
 Para a primeira parte do projeto o grupo pretende criar um jogo em que o player dispute contra exércitos pré-definidos, já deixando pronta a jogabilidade principal de montar o exército e lutar contra outro exército, e depois adicionar a possibilidade de outro player criando um exército simultaneamente para a disputa final.
 
+# Como jogar
+
+Para ativar instância como servidor aperte E e como cliente(que vai jogar) aperte R. O cliente precisa configurar o endereço do ip do servidor escolhido no arquivo 'config/ip_remoto.ini'. Para jogar use as setas para se movimentar e segure a barra de espaço perto de um túmulo até a vida dele zerar para invocar um zumbi.
+
 # Planejamento
 
 Primeiro criaremos as classes do model responsáveis por armazenar os dados dos players, do mapa e das criaturas minions.
