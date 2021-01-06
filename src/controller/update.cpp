@@ -23,6 +23,19 @@ update::update(){
 	spawns_entity(10, -1, 41, 20);
 	spawns_entity(10, -1, 42, 20);
 	spawns_entity(10, -1, 43, 20);
+
+	spawns_entity(10, -1, 52, 8);
+	spawns_entity(10, -1, 51, 8);
+	spawns_entity(10, -1, 50, 8);
+
+
+	spawns_entity(10, -1, 49, 30);
+	spawns_entity(10, -1, 48, 30);
+	spawns_entity(10, -1, 47, 30);
+
+	spawns_entity(10, -1, 5, 30);
+	spawns_entity(10, -1, 4, 30);
+	spawns_entity(10, -1, 3, 30);
 	//zombies
 
 	//cops
@@ -165,7 +178,7 @@ void update::step(float T){
 
 		//entities
 		//creates vector to sort by y	
-		vector <entity> sorted=Entities;
+		vector <entity> sorted(Entities);
 		//sorts 'sorted' by the entities's y
 		std::sort(sorted.begin(), sorted.end(), [](entity  a, entity b){ return a.ry() < b.ry(); });
 
