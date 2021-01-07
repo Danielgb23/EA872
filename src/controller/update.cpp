@@ -19,10 +19,10 @@ update::update(){
 	spawns_entity(10, -1, 4, 7);
 	spawns_entity(10, -1, 3, 7);
 
-	spawns_entity(10, -1, 40, 20);
-	spawns_entity(10, -1, 41, 20);
-	spawns_entity(10, -1, 42, 20);
-	spawns_entity(10, -1, 43, 20);
+	spawns_entity(10, 2, 40, 20);
+	spawns_entity(10, 3, 41, 20);
+	spawns_entity(10, 4, 42, 20);
+	spawns_entity(10, 5, 43, 20);
 
 	spawns_entity(10, -1, 52, 8);
 	spawns_entity(10, -1, 51, 8);
@@ -271,7 +271,7 @@ void update::client_net(){
 }
 
 void update::render_entity(entity &ent){
-	SDL_Rect target;
+	SDL_Rect target, arrow_rec;
 	int h,w;
 	string text;
 	int render_factor=25;
@@ -300,6 +300,18 @@ void update::render_entity(entity &ent){
 	if(text.length()==2)
 		text="0"+text;
 	Viewer.render_text(text, Message_rect);
+
+	//renders team arrow
+	 arrow_rec.w= Message_rect.w; 
+
+	SDL_QueryTexture(Viewer.arrow_texture(ent.return_team()), nullptr, nullptr, &w, &h);
+	arrow_rec.h=(int)((float)h/(float)w*Message_rect.w);
+
+	 arrow_rec.x= Message_rect.x; 
+	 arrow_rec.y= Message_rect.y-arrow_rec.h;
+
+	Viewer.render(Viewer.arrow_texture(ent.return_team()), arrow_rec);
+
 
 }
 //creates shared pointer to host an entity until it's out of scope

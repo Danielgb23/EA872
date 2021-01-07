@@ -7,15 +7,16 @@ set(CMAKE_BUILD_TYPE Debug)
 # Nome do meu projeto
 project(madrugada_dos_mortos)
 
-#
 add_executable(madruga src/main.cpp)
 
 #flag pthread
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
+find_package(Boost REQUIRED COMPONENTS filesystem) 
 
 # Especificar onde estao os header files
+include_directories( ${Boost_INCLUDE_DIRS} )
 include_directories(include)
 
 # Bibliotecas locais (estaticas)
@@ -27,13 +28,13 @@ add_library(player src/model/player.cpp)
 add_library(mapa src/model/mapa.cpp)
 target_link_libraries(madruga mapa)
 
-
 add_library(assets src/view/assets.cpp)
+target_link_libraries(assets boost_filesystem)
 target_link_libraries(madruga assets)
 
 add_library(view src/view/view.cpp)
-target_link_libraries(madruga view)
 target_link_libraries(view assets)
+target_link_libraries(madruga view)
 
 add_library(net src/controller/net.cpp)
 

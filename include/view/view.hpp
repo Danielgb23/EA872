@@ -27,6 +27,7 @@ class view{
 		void init_window ();
 		void init_render ();
 		SDL_Texture * entity_texture(int type);
+		SDL_Texture * arrow_texture(int team);
 		void render(SDL_Texture * texture, SDL_Rect target);
 		void  render_text(string text, SDL_Rect  Message_rect);
 		~view();

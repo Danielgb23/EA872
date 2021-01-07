@@ -77,6 +77,7 @@ void  view::render_text(string text, SDL_Rect Message_rect){
 	SDL_DestroyTexture(Message);
 }
 
+
 void view::clear(){
 	SDL_RenderClear(renderer);
 }
@@ -84,8 +85,13 @@ void view::present(){
 	SDL_RenderPresent(renderer);
 }
 SDL_Texture * view::entity_texture(int type){
-	Assets.return_texture(type);
+	return Assets.return_texture(type);
 }
+
+SDL_Texture * view::arrow_texture(int team){
+	return	Assets.return_arrow(team);
+}
+
 void view::render(SDL_Texture * texture, SDL_Rect target){
 	//Draws the target element 
 	SDL_RenderCopy(renderer, texture, nullptr, &target);

@@ -152,7 +152,5 @@ void	entity::update_pos(float pos_x, float pos_y){
 
 
 entity::~entity(){
-	//cout<<"entity destroyed\n";
-	//SDL_DestroyTexture(standing);
 
 }

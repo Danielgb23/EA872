@@ -24,8 +24,6 @@ class entity{
 		float range;
 		float attack_rate;
 		float attack_cooldown;
-		//SDL_Texture * standing;
-		std::shared_ptr<SDL_Texture> standing;
 
 	public:
 
