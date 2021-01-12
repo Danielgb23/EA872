@@ -19,10 +19,10 @@ update::update(){
 	spawns_entity(10, -1, 4, 7);
 	spawns_entity(10, -1, 3, 7);
 
-	spawns_entity(10, 2, 40, 20);
-	spawns_entity(10, 3, 41, 20);
-	spawns_entity(10, 4, 42, 20);
-	spawns_entity(10, 5, 43, 20);
+	spawns_entity(10, -1, 40, 20);
+	spawns_entity(10, -1, 41, 20);
+	spawns_entity(10, -1, 42, 20);
+	spawns_entity(10, -1, 43, 20);
 
 	spawns_entity(10, -1, 52, 8);
 	spawns_entity(10, -1, 51, 8);
